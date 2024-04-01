@@ -10,8 +10,8 @@ import StudyReportScreen from './StudyReportScreen';
 import SleepReportScreen from './SleepReportScreen';
 import HomeScreen from './HomeScreen';
 
-const homeName = "Home";
-const profileName = "Profile";
+const homeName = "HomePage";
+const profileName = "ProfilePage";
 
 
 const Tab = createBottomTabNavigator();
@@ -28,6 +28,14 @@ function ProfileStack () {
     )
 }
 
+function HomeStack() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="Home" component={HomeScreen} />
+        </Stack.Navigator>
+    )
+}
+
 function NavigationBar() {
     return (
         <NavigationContainer>
@@ -38,6 +46,8 @@ function NavigationBar() {
                     inactiveTintColor: 'grey',
                     labelStyle: { paddingBottom: 10, fontSize: 10 },
                     style: { padding: 10, height: 70},
+                    headerShown: false,
+                    tabBarShowLabel: false,
                     tabBarIcon: ({ focused, color, size }) => {
                         let iconName;
                         let icon;
@@ -57,8 +67,8 @@ function NavigationBar() {
                 })}
                 >
 
-                <Tab.Screen name={homeName} component={HomeScreen} />
-                <Tab.Screen name={profileName} component={ProfileScreen} />
+                <Tab.Screen name={homeName} component={HomeStack} />
+                <Tab.Screen name={profileName} component={ProfileStack} />
 
             </Tab.Navigator>
         </NavigationContainer>
