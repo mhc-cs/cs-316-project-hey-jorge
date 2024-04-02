@@ -1,40 +1,70 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import React,  { useState, createContext, useContext, useEffect } from 'react';
+import { StyleSheet, Text, View, ScrollView, ActivityIndicator } from 'react-native';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './app/config/firebase';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import NavigationBar from './app/screens/NavigationBar';
-import ProfileScreen from './app/screens/ProfileScreen';
-import StudyReportScreen from './app/screens/StudyReportScreen';
-import SleepReportScreen from './app/screens/SleepReportScreen';
-import HomeScreen from './app/screens/HomeScreen';
+import Login from './app/screens/Login';
+import Signup from './app/screens/Signup';
 
-// const ProfileStack = createStackNavigator();
 
-export default function App() {
-  return(
-  //   <View style={styles.container}>
-  //     <Text>Open up App.js to start working on your app!</Text>
-  //     <StatusBar style="auto" />
-  //   </View>
+const Stack = createStackNavigator();
+const AuthenticatedUserContext = createContext({});
 
-    // <NavigationContainer>
-    //   <ProfileStack.Navigator initialRouteName='Profile'> */}
-    //     <ProfileStack.Screen name="Profile" component={ProfileScreen} />
-    //     <ProfileStack.Screen name="Study Report" component={StudyReportScreen} />
-    //     <ProfileStack.Screen name="Sleep Report" component={SleepReportScreen} />
-    //   </ProfileStack.Navigator>
-    // </NavigationContainer>
+const AuthenticatedUserProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+return (
+    <AuthenticatedUserContext.Provider value={{ user, setUser }}>
+      {children}
+    </AuthenticatedUserContext.Provider>
+  );
+};
 
-    <NavigationBar/>
+function AuthStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='Login' component={Login} />
+      <Stack.Screen name='Signup' component={Signup} />
+    </Stack.Navigator>
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
+function RootNavigator() {
+    const { user, setUser } = useContext(AuthenticatedUserContext);
+    const [isLoading, setIsLoading] = useState(true);
+    useEffect(() => {
+        // onAuthStateChanged returns an unsubscriber
+        const unsubscribeAuth = onAuthStateChanged(
+            auth,
+            async authenticatedUser => {
+            authenticatedUser ? setUser(authenticatedUser) : setUser(null);
+            setIsLoading(false);
+            }
+        );
+    // unsubscribe auth listener on unmount
+        return unsubscribeAuth;
+        }, [user]);
+    if (isLoading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ActivityIndicator size='large' />
+            </View>
+        );
+        }
+    
+    return (
+      <NavigationContainer>
+        {user ? <NavigationBar/> : <AuthStack />}
+      </NavigationContainer>
+    );
+  }  
+
+export default function App() {
+  return(
+    <AuthenticatedUserProvider>
+      <RootNavigator />
+    </AuthenticatedUserProvider>
+  );
+}
