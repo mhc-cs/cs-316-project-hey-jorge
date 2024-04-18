@@ -291,7 +291,7 @@ const ChatMessagesScreen = () => {
   
             if (item.messageType === "image") {
               const baseUrl =
-                "/Users/sujananand/Build/messenger-project/api/files/";
+                "/Users/chuhanwang/Desktop/cs-316-project-hey-jorge/Study-with-Jorge/api/files/";
               const imageUrl = item.imageUrl;
               const filename = imageUrl.split("/").pop();
               const source = { uri: baseUrl + filename };
@@ -320,8 +320,9 @@ const ChatMessagesScreen = () => {
                 >
                   <View>
                     <Image
-                      source={source}
-                      style={{ width: 200, height: 200, borderRadius: 7 }}
+                        source={source}
+                        style={{ width: 200, height: 200, borderRadius: 7 }}
+                        onError={(e) => console.log('Failed to load image:', e.nativeEvent.error)}
                     />
                     <Text
                       style={{
