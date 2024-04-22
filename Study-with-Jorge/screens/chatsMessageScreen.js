@@ -95,7 +95,7 @@ const ChatMessagesScreen = () => {
         const formData = new FormData();
         formData.append("senderId", userId);
         formData.append("recepientId", recepientId);
-  
+        console.log("Image URI:", imageUri);
         //if the message type id image or a normal text
         if (messageType === "image") {
           formData.append("messageType", "image");
@@ -208,18 +208,29 @@ const ChatMessagesScreen = () => {
       return new Date(time).toLocaleString("en-US", options);
     };
     const pickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-      if (!result.canceled) {
-        handleSend("image", result.uri);
-      }
-    };
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 1,
+        });
+      
+        console.log("Image Picker Result:", JSON.stringify(result));
+      
+        if (result.canceled) {
+          console.log("Image picking was canceled.");
+        } else if (!result.assets || result.assets.length === 0) {
+          console.log("No assets found in the result.");
+        } else {
+          const uri = result.assets[0].uri;
+          console.log("Image URI:", uri);
+          handleSend("image", uri);
+        }
+      };
+      
+      
+      
+      
     const handleSelectMessage = (message) => {
       //check if the message is already selected
       const isSelected = selectedMessages.includes(message._id);
