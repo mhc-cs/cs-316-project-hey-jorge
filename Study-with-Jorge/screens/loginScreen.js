@@ -1,108 +1,162 @@
+import React, { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  ImageBackground,
+  KeyboardAvoidingView,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+const backImage = require("../assets/Jorge.jpeg");
 
 const LoginScreen = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const navigation = useNavigation();
-    // useEffect(() => {
-    //     const checkLoginStatus = async () => {
-    //       try {
-    //         const token = await AsyncStorage.getItem("authToken");
-    
-    //         if (token) {
-    //           navigation.replace("Home");
-    //         } else {
-    //           // token not found , show the login screen itself
-    //         }
-    //       } catch (error) {
-    //         console.log("error", error);
-    //       }
-    //     };
-    
-    //     checkLoginStatus();
-    //   }, []);
-    const handleLogin = () => {
-        const user = {
-          email: email,
-          password: password,
-        };
-    
-        axios
-          .post("http://localhost:8080/login", user)
-          .then((response) => {
-            console.log(response);
-            const token = response.data.token;
-            AsyncStorage.setItem("authToken", token);
-    
-            navigation.replace("Home");
-          })
-          .catch((error) => {
-            Alert.alert("Login Error", "Invalid email or password");
-            console.log("Login Error", error);
-          });
-      };
-    return (
-        <View style={{ flex: 1, backgroundColor: "white", padding: 10, alignItems: "center" }}>
-            <KeyboardAvoidingView>
-                <View style={{ marginTop: 100, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ color: "#4A55A2", fontSize: 17, fontWeight: "600" }}>Sign in</Text>
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigation = useNavigation();
 
-                    <Text style={{ fontSize: 17, fontWeight: "600", marginTop: 15 }}>
-                        Sign In to Your Account
-                    </Text>
-                </View>
+  const handleLogin = () => {
+    const user = {
+      email: email,
+      password: password,
+    };
 
-                <View style={{ marginTop: 50 }}>
-                    <View>
-                        <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>Email</Text>
+    axios
+      .post("http://localhost:8080/login", user)
+      .then((response) => {
+        console.log(response);
+        const token = response.data.token;
+        AsyncStorage.setItem("authToken", token);
 
-                        <TextInput
-                            value={email}
-                            onChangeText={(text) => setEmail(text)}
-                            style={{ fontSize: email ? 18 : 18, borderBottomColor: "gray", borderBottomWidth: 1, marginVertical: 10, width: 300, }}
-                            placeholderTextColor={"black"}
-                            placeholder="enter Your Email" />
-                    </View>
-                </View>
+        navigation.replace("Home");
+      })
+      .catch((error) => {
+        Alert.alert("Login Error", "Invalid email or password");
+        console.log("Login Error", error);
+      });
+  };
 
-                <View style={{ marginTop: 10 }}>
-                    <View>
-                        <Text style={{ fontSize: 18, fontWeight: "600", color: "gray" }}>Password</Text>
+  return (
+    <ImageBackground
+      source={backImage} // Replace with the correct path to your image file
+      style={styles.backgroundImage}
+    >
+      <View style={styles.container}>
+        <KeyboardAvoidingView behavior="padding" style={styles.keyboardView}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>Sign in</Text>
+            <Text style={styles.headerSubtitle}>Sign In to Your Account</Text>
+          </View>
 
-                        <TextInput
-                            value={password}
-                            onChangeText={(text) => setPassword(text)}
-                            secureTextEntry={true}
-                            style={{ fontSize: email ? 18 : 18, borderBottomColor: "gray", borderBottomWidth: 1, marginVertical: 10, width: 300, }}
-                            placeholderTextColor={"black"}
-                            placeholder="password" />
-                    </View>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+              style={styles.input}
+              placeholderTextColor={"white"}
+              placeholder="Enter your email"
+            />
+          </View>
 
-                    <Pressable onPress={handleLogin}
-                        style={{ width: 200, backgroundColor: "#4A55A2", padding: 15, marginTop: 50, marginLeft: "auto", marginRight: "auto", borderRadius: 6 }}>
-                        <Text style={{ color: "white", fontSize: 16, fontWeight: "bold", textAlign: "center", }}>Login</Text>
-                    </Pressable>
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              value={password}
+              onChangeText={(text) => setPassword(text)}
+              secureTextEntry={true}
+              style={styles.input}
+              placeholderTextColor={"white"}
+              placeholder="Enter your password"
+            />
+          </View>
 
-                    <Pressable onPress={() => navigation.navigate("Register")} style={{ marginTop: 15 }}>
-                        <Text style={{ textAlign: "center", color: "gray", fontSize: 16 }}>Dont't have an account? Sign Up</Text>
-                    </Pressable>
-                </View>
-            </KeyboardAvoidingView>
-        </View>
-    );
+          <Pressable onPress={handleLogin} style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </Pressable>
+
+          <Pressable onPress={() => navigation.navigate("Register")} style={styles.registerButton}>
+            <Text style={styles.registerButtonText}>Don't have an account? Sign Up</Text>
+          </Pressable>
+        </KeyboardAvoidingView>
+      </View>
+    </ImageBackground>
+  );
 };
 
 export default LoginScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  container: {
+    flex: 1,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  keyboardView: {
+    width: '100%',
+  },
+  headerContainer: {
+    marginTop: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    color: "#4A55A2",
+    fontSize: 17,
+    fontWeight: "600",
+  },
+  headerSubtitle: {
+    fontSize: 17,
+    fontWeight: "600",
+    marginTop: 15,
+  },
+  inputContainer: {
+    marginTop: 20,
+  },
+  inputLabel: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "gray",
+  },
+  input: {
+    fontSize: 18,
+    borderBottomColor: "white",
+    borderBottomWidth: 1,
+    marginVertical: 10,
+    width: 300,
+    color: "white"
+  },
+  loginButton: {
+    width: 200,
+    backgroundColor: "#4A55A2", // You can replace with your preferred shade of blue
+    padding: 15,
+    marginTop: 50,
+    alignSelf: 'center',
+    borderRadius: 6,
+  },
+  loginButtonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  registerButton: {
+    marginTop: 15,
+  },
+  registerButtonText: {
+    textAlign: "center",
+    color: "black",
+    fontSize: 16,
+  },
+});
+
