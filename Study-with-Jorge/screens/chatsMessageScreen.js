@@ -51,8 +51,6 @@ const ChatMessagesScreen = () => {
       setShowEmojiSelector(!showEmojiSelector);
     };
   
-  
-  
     const fetchMessages = async () => {
       try {
         const response = await fetch(
