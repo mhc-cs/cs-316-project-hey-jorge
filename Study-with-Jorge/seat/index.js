@@ -59,15 +59,15 @@ mongoose.connect(mongoURI)
             if (chair.isOccupied) {
                 // Calculate the duration of occupancy
                 const endTime = new Date();
-                const durationInSeconds = (endTime - chair.startTime) / 1000; // Duration in seconds
-                console.log("Duration in seconds:", durationInSeconds); // Add this line to log the duration
+                const durationInHours = (endTime - chair.startTime) / 1000 / 3600; // Duration in hours
+                console.log("Duration in hours:", durationInHours); // Add this line to log the duration
 
                 // Save the summary entry with the duration
                 const summaryEntry = new Summary({
                     userId: chair.occupiedByUser,
                     startTime: chair.startTime.toISOString().substring(0, 10),
                     endTime: endTime.toISOString().substring(0, 10),
-                    length: durationInSeconds  // Saving the duration in seconds
+                    length: durationInHours  // Saving the duration in seconds
                 });
                 console.log("Attempting to save summary entry:", summaryEntry);
                 await summaryEntry.save()
