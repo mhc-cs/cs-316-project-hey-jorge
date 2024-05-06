@@ -12,6 +12,11 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const { userId, setUserId } = useContext(UserType);
   const [users, setUsers] = useState([]);
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('authToken');
+    navigation.replace('Login');
+  };
+  
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
@@ -27,6 +32,7 @@ const HomeScreen = () => {
             size={24}
             color="black"
           />
+          <Ionicons onPress={handleLogout} name="log-out-outline" size={24} color="black" />
         </View>
       ),
     });
